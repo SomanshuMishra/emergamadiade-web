@@ -1,2 +1,0 @@
-0 */8 * * * echo "Populating database..." >> /proc/1/fd/1 2>/proc/1/fd/2
-0 */8 * * * php /app/post_gather.php >> /proc/1/fd/1 2>/proc/1/fd/2
