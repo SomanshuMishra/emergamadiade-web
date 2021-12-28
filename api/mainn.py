@@ -76,6 +76,40 @@ def filter_feeds(subreddit):
     return {'assets': feed_list}
 
 
+
+@app.route('/feeds/filter/gls', methods=['GET'])
+def filter_gls():
+    feed_list = []
+    feeds = Feeds.query.filter(Feeds.gl_counter >= 1).filter(Feeds.rl_counter == 0).all()
+
+    for entry in feeds:
+        feed_list.append(entry.as_dict())
+
+    return {'assets': feed_list}
+
+
+@app.route('/feeds/filter/subreddit_id', methods=['POST'])
+def filter_link_ids():
+    json_request = request.json
+
+    if "keyword" not in json_request.keys():
+        return {'message': 'Invalid parameter passed', 'parameter': 'keyword'}, 400
+
+    keyword = json_request.get('keyword').strip()
+
+    feed_list = []
+
+    if not keyword:
+        return {'message': 'Invalid parameter passed', 'parameter': 'keyword'}, 400
+
+    feeds = Feeds.query.filter(Feeds.reddit_link_id.ilike(f'%{keyword}%')).order_by(Feeds.reddit_created_utc.desc()).all()
+
+    for entry in feeds:
+        feed_list.append(entry.as_dict())
+
+    return {'assets': feed_list}
+
+
 @app.route('/feeds/<subreddit>', methods=['PUT'])
 def add_feeds(subreddit):
     json_request = request.json
