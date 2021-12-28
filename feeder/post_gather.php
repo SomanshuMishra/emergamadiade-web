@@ -3,7 +3,6 @@ set_time_limit(0);
 //Store in DB API
 function callAPI($method, $url, $data)
 {
-    echo "code is running";
     $curl = curl_init();
     switch ($method) {
         case "POST":
@@ -622,7 +621,7 @@ foreach ($subreddits_array as $subreddits) {
     
     foreach (results($timestamp, $subreddits, $size) as $result) {
         
-        callAPI('PUT', "http://glfinder-api:8080/feeds/$subreddits", json_encode($result, JSON_UNESCAPED_SLASHES));
+        callAPI('PUT', "http://127.0.0.1:8080/feeds/$subreddits", json_encode($result, JSON_UNESCAPED_SLASHES));X
 
     }
     unset($result);
