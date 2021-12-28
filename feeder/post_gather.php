@@ -90,10 +90,16 @@ function get_submission($link_id)
 function results($timestamp, $subreddit, $size)
 {
     echo "Results func is running";
-    #$flairs_arr = ["LCQC", "QC/LC", "QC", "Quality Control", "QUALITY CHECK", "QC Pics (with guidelines followed)", "QC Pics (with Rule 5 format followed)"];
-    $flairs_arr = ["LCQC"];
+    #added GL to improve greenlight detection
+    $flairs_arr = ["LCQC", "QC/LC", "QC", "Quality Control", "QUALITY CHECK", "QC Pics (with guidelines followed)", "GL", "QC CG"];
+    #$flairs_arr = ["QC CG", "LCQC", "QC/LC", "QC", "Quality Control"];
     $final_arr = [];
 
+    #Added for red light counter
+    $flairs_arr_rl = ["RL"];
+    $final_arr_rl = [];
+
+    #Greenlight counter
     for ($i = 0; $i < 10; $i++) {
 
         $URL = "https://api.pushshift.io/reddit/search/comment/?q=GL&subreddit=$subreddit&before=$timestamp&sort=desc&size=$size&fields=link_id,created_utc,permalink,id";
@@ -153,6 +159,21 @@ function results($timestamp, $subreddit, $size)
                                     $unique_arr[$key]['thumbnail_link'] = $submissions_title['url'];
                                 }
 
+                                #Thumbnail not available
+                                if (stripos($submissions_title['url'], 'imgur.com') !== false) {
+                                    $unique_arr[$key]['thumbnail_link'] = $submissions_title['url'];
+                                } 
+
+                                if (stripos($submissions_title['url'], 'taobao.com') !== false) {
+                                    $unique_arr[$key]['thumbnail_link'] = $submissions_title['url'];
+                                }
+
+                                if (stripos($submissions_title['url'], 'weidian.com') !== false) {
+                                    $unique_arr[$key]['thumbnail_link'] = $submissions_title['url'];
+                                } 
+
+                                #End of thumbnail not available
+
                                 if (stripos($submissions_title['url'], 'imgur.com') !== false) {
                                     $unique_arr[$key]['imgur_iframe'] = $submissions_title['url'];
                                 }
@@ -162,6 +183,10 @@ function results($timestamp, $subreddit, $size)
                                 }
 
                                 if (stripos($submissions_title['url'], 'weidian.com') !== false) {
+                                    $unique_arr[$key]['w2c_link'] = $submissions_title['url'];
+                                } 
+                                #Added for WC2 better detection.
+                                if (stripos($submissions_title['url'], 'wegobuy.com') !== false) {
                                     $unique_arr[$key]['w2c_link'] = $submissions_title['url'];
                                 }
                             }
@@ -189,7 +214,7 @@ function results($timestamp, $subreddit, $size)
 
                             }
 
-                            if (isset($submissions_title['preview'])) {
+                            if (isset($submissions_title['preview'])) { 
                                 $unique_arr[$key]['thumbnail_link'] = $submissions_title['preview']['images'][0]['source']['url'];
                             } elseif (isset($submissions_title['thumbnail'])) {
 
@@ -292,9 +317,8 @@ function results($timestamp, $subreddit, $size)
                 $submissions_title['id'] = "t3_" . $submissions_title['id'];
 
                 foreach ($unique_arr as $key => $value) {
-                    if ($value['reddit_link_id'] != $submissions_title['id']) {
-                        if (in_array($submissions_title['link_flair_text'], $flairs_arr)) {
-
+                    if ($value['reddit_link_id'] == $submissions_title['id']) {
+                        if (in_array($submissions_title['link_flair_text'], $flairs_arr_rl)) {
                             $rl_counter = 0;
                             foreach ($no_dupes as $rl_count) {
                                 if ($rl_count['reddit_link_id'] == $value['reddit_link_id']) {
@@ -324,6 +348,11 @@ function results($timestamp, $subreddit, $size)
                                 }
 
                                 if (stripos($submissions_title['url'], 'weidian.com') !== false) {
+                                    $unique_arr[$key]['w2c_link'] = $submissions_title['url'];
+                                }
+
+                                #Added for WC2 better detection.
+                                if (stripos($submissions_title['url'], 'wegobuy.com') !== false) {
                                     $unique_arr[$key]['w2c_link'] = $submissions_title['url'];
                                 }
                             }
@@ -412,7 +441,7 @@ function results($timestamp, $subreddit, $size)
             }
             unset($submissions_arr, $submissions_title, $no_dupes);
 
-            $final_arr[] = $unique_arr;
+            $final_arr_rl[] = $unique_arr;
         }
     }
 
@@ -613,15 +642,16 @@ function results($timestamp, $subreddit, $size)
 
 $timestamp = time();
 #all subreddits combination
-#$subreddits_array = ["fashionreps", "repsneakers", "flexicas", "designerreps", "reptime", "repladies", "fashionreps repsneakers flexicas designerreps reptime repladies"];
-$subreddits_array = ["fashionreps"];
+$subreddits_array = ["fashionreps", "repsneakers", "flexicas", "designerreps", "reptime", "repladies"];
+#$subreddits_array = ["fashionreps"];
 $size = 1000;
 
 foreach ($subreddits_array as $subreddits) {
     
     foreach (results($timestamp, $subreddits, $size) as $result) {
         
-        callAPI('PUT', "http://127.0.0.1:8080/feeds/$subreddits", json_encode($result, JSON_UNESCAPED_SLASHES));X
+        #callAPI('PUT', "http://glfinder-api:8080/feeds/$subreddits", json_encode($result, JSON_UNESCAPED_SLASHES));
+        callAPI('PUT', "http://127.0.0.1:8080/feeds/$subreddits", json_encode($result, JSON_UNESCAPED_SLASHES));
 
     }
     unset($result);

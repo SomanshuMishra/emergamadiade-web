@@ -37,7 +37,7 @@ class Feeds(db.Model):
     w2c_link = db.Column(db.String(512), unique=False, nullable=True)
     gl_counter = db.Column(db.Integer, default=1, unique=False, nullable=True)
     #Redlight
-    rl_counter = db.Column(db.Integer, default=1, unique=False, nullable=True)
+    rl_counter = db.Column(db.Integer, default=0, unique=False, nullable=True)
 
 
 
