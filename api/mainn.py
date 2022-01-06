@@ -76,7 +76,7 @@ def filter_feeds(subreddit):
     return {'assets': feed_list}
 
 
-
+#Filter for Gl's
 @app.route('/feeds/filter/gls', methods=['GET'])
 def filter_gls():
     feed_list = []
@@ -87,7 +87,7 @@ def filter_gls():
 
     return {'assets': feed_list}
 
-
+#Filter for Link IDs
 @app.route('/feeds/filter/subreddit_id', methods=['POST'])
 def filter_link_ids():
     json_request = request.json

@@ -36,7 +36,7 @@ class Feeds(db.Model):
     thumbnail_link = db.Column(db.String(512), unique=False, nullable=True)
     w2c_link = db.Column(db.String(512), unique=False, nullable=True)
     gl_counter = db.Column(db.Integer, default=1, unique=False, nullable=True)
-    #Redlight
+    #Adding Redlight column to the DB
     rl_counter = db.Column(db.Integer, default=0, unique=False, nullable=True)
 
 
