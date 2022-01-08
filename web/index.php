@@ -61,7 +61,8 @@ function results($timestamp, $subreddit, $size)
     http://glfinder-api:8080/feeds/filter/<subreddit>/<word>/
 
     */
-    $data = get_content("http://glfinder-api:8080/feeds/all/$subreddit/$timestamp/$size");
+    $baseURL = "http://127.0.0.1:8080/";
+    $data = get_content($baseURL + "feeds/all/$subreddit/$timestamp/$size");
     return json_decode($data, true);
 }
 
@@ -74,7 +75,7 @@ if (isset($_GET['search'])) {
     $subreddit = filter_input(INPUT_POST, 'subreddit', FILTER_SANITIZE_STRING);
 
     if (in_array($subreddit, $subreddits_array)) {
-        $data = callAPI('POST', "http://glfinder-api:8080/feeds/filter/$subreddit", json_encode(array("keyword" => $search_query), JSON_UNESCAPED_SLASHES));
+        $data = callAPI('POST', $baseURL+"feeds/filter/$subreddit", json_encode(array("keyword" => $search_query), JSON_UNESCAPED_SLASHES));
         die($data);
     } else {
         die(json_encode(array("status" => "failed")));

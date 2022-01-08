@@ -13,7 +13,8 @@ function get_content($URL)
 
 function results($subreddit, $size)
 {
-    $data = get_content("http://fashionreps-api:8080/feeds/all/$subreddit/$size");
+    $base_url = "http://127.0.0.1:8080/";
+    $data = get_content(base_url+"feeds/all/$subreddit/$size");
     return json_decode($data, true);
 }
 

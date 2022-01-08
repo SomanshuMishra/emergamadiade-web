@@ -3,7 +3,6 @@ set_time_limit(0);
 //Store in DB API
 function callAPI($method, $url, $data)
 {
-    echo "code is running";
     $curl = curl_init();
     switch ($method) {
         case "POST":
