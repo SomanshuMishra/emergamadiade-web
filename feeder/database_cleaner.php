@@ -5,7 +5,7 @@ $password = "Karama@123";
 $dbname = "emerger";
 
 // Create connection to postgress database
-$conn = pg_connect("host=servername dbname=emerger user=Connnn password=Karama@123");
+$conn = pg_connect("host=servername, dbname=emerger, user=Connnn, password=Karama@123");
 
 // Check connection
 if ($conn->connect_error) {
@@ -37,8 +37,8 @@ for ($i = 0; $i < 10; $i++) {
  
     $URL = "https://api.pushshift.io/reddit/search/comment/?q=GL&subreddit=$subreddit&before=$timestamp&sort=desc&size=$size&fields=link_id,created_utc,permalink,id";
     #Database Values.
-    $reddit_title_sql = "SELECT reddit_title FROM Feeds"; 
-    $reddit_title = pg_query($conn, $reddit_title_sql);
+    $reddit_linkid_sql = "SELECT reddit_link_id FROM Feeds"; 
+    $reddit_link_id = pg_query($conn, $reddit_linkid_sql);
 
     $data = json_decode(get_content($URL), true);
 
@@ -65,9 +65,9 @@ for ($i = 0; $i < 10; $i++) {
         $link_ids = implode(",", $ids_arr);
 
         $submissions_arr = json_decode(get_submission($link_ids), true);
-
-        if (in_array($reddit_title, $submissions_arr['data']['reddit_title'])) {
-            $delete_sql = "DELETE FROM Feeds WHERE reddit_title=$reddit_title";
+    #compare the link ID's
+        if (in_array($reddit_link_id, $submissions_arr['data']['id'])) {
+            $delete_sql = "DELETE FROM Feeds WHERE reddit_link_id=$reddit_link_id";
             if(pg_query($conn, $delete_sql)){
                 echo "Record deleted succesfully";
             }else{
