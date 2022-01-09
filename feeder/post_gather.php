@@ -393,7 +393,7 @@ function results($timestamp, $subreddit, $size)
                     #W2C link detection (Original post)
                     if(in_array($comments['link_id'], $the_link_ids)){ 
                         if (isset($comments['body'])) {
-                            
+
                             if (stripos($comments['body'], 'weidian.com') !== false) {
                                 $unique_arr[$key]['w2c_link'] = $comments['w2c_link'];
                             }
@@ -428,8 +428,8 @@ foreach ($subreddits_array as $subreddits) {
 
     // foreach (results($timestamp, $subreddits, $size) as $result) {
         
-        #callAPI('PUT', "http://glfinder-api:8080/feeds/$subreddits", json_encode($result, JSON_UNESCAPED_SLASHES));
-    callAPI('PUT', "http://127.0.0.1:8080/feeds/$subreddits", json_encode($result, JSON_UNESCAPED_SLASHES));
+    callAPI('PUT', "http://glfinder-api:8080/feeds/$subreddits", json_encode($result, JSON_UNESCAPED_SLASHES));
+    #callAPI('PUT', "http://127.0.0.1:8080/feeds/$subreddits", json_encode($result, JSON_UNESCAPED_SLASHES));
         
     // }
     unset($result);

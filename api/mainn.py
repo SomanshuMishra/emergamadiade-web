@@ -75,11 +75,6 @@ def filter_feeds(subreddit):
 
     return {'assets': feed_list}
 
-<<<<<<< HEAD
-
-#Filter for Gl's
-=======
->>>>>>> 9910c0b71944bc7aa06006bb7fd573df161e2db6
 @app.route('/feeds/filter/gls', methods=['GET'])
 def filter_gls():
     feed_list = []
