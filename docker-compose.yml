@@ -78,7 +78,7 @@ services:
         env_file:
             - configs/postgres.env
         environment:
-            - FLASK_APP=main.py
+            - FLASK_APP=mainn.py
         depends_on:
             - database
         restart: always
