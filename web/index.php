@@ -323,8 +323,8 @@ if (isset($_GET['w2c_only']) && $_GET['w2c_only'] == 'yes') {
 
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4" id="main_holder">
                 <?php
-
-                foreach (results($timestamp, $subreddit, $size)['assets'] as $datum) {
+                $results_data = results($timestamp, $subreddit, $size);
+                foreach ($results_data['assets'] as $datum) {
 
                     if (isset($datum['imgur_iframe'])) {
                         $imgur_preview = $datum['imgur_iframe'];
