@@ -56,13 +56,14 @@ function results($timestamp, $subreddit, $size)
 {
     /*
 
-    http://glfinder-api:8080/feeds/all/<subreddit>/<rlimit>
-    http://glfinder-api:8080/feeds/all/<subreddit>/<timestamp>/<rlimit>
-    http://glfinder-api:8080/feeds/filter/<subreddit>/<word>/
+    http://glfinder-api:5000/feeds/all/<subreddit>/<rlimit>
+    http://glfinder-api:5000/feeds/all/<subreddit>/<timestamp>/<rlimit>
+    http://glfinder-api:5000/feeds/filter/<subreddit>/<word>/
 
     */
-    $baseURL = "http://127.0.0.1:8080/";
-    $data = get_content($baseURL + "feeds/all/$subreddit/$timestamp/$size");
+    $baseURL = "http://127.0.0.1:5000/";
+    // $data = get_content($baseURL + "feeds/all/$subreddit/$timestamp/$size");
+    $data = get_content("http://127.0.0.1:5000/feeds/all/$subreddit/$timestamp/$size");
     return json_decode($data, true);
 }
 
@@ -107,6 +108,9 @@ if (isset($_GET['size']) && in_array($_GET['size'], $entries_array)) {
 if (isset($_GET['w2c_only']) && $_GET['w2c_only'] == 'yes') {
     $w2c_only = 'checked';
     $w2c_uri = '&w2c_only=yes';
+}else {
+    $w2c_only = 'unchecked';
+    $w2c_uri = '&w2c_only=no';
 }
 
 
@@ -288,7 +292,7 @@ if (isset($_GET['w2c_only']) && $_GET['w2c_only'] == 'yes') {
         <div class="container">
             <div class="pb-3">
                 <label for="filterword">Filter List</label>
-                <input type="text" name="filterword" id="filterword" <?php echo $filter_value; ?>>
+                <input type="text" name="filterword" id="filterword" >
                 <select class="custom-select custom-select-sm w-auto float-right" name="subreddit" id="subreddit"
                         style="vertical-align: unset;">
                     <option value='' <?php if (!isset($subreddit)) {
