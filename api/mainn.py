@@ -15,10 +15,6 @@ from sqlalchemy import and_
 
 CORS(app)
 
-@app.route('/', methods=["GET"])
-def index():
-    return 'Home'
-
 @app.route('/feeds/all/<subreddit>/<rlimit>', methods=['GET'])
 def get_all_feeds(subreddit, rlimit=500):
     feed_list = []
@@ -30,7 +26,7 @@ def get_all_feeds(subreddit, rlimit=500):
 
     print(feeds)
 
-    for entry in feeds: 
+    for entry in feeds:
         feed_list.append(entry.as_dict())
 
     return {'assets': feed_list}
@@ -75,63 +71,6 @@ def filter_feeds(subreddit):
 
     return {'assets': feed_list}
 
-@app.route('/feeds/filter/gls', methods=['GET'])
-def filter_gls():
-    feed_list = []
-    feeds = Feeds.query.filter(Feeds.gl_counter >= 1).filter(Feeds.rl_counter == 0).all()
-
-    for entry in feeds:
-        feed_list.append(entry.as_dict())
-
-    return {'assets': feed_list}
-
-#Filter for Link IDs
-@app.route('/feeds/filter/subreddit_id', methods=['POST'])
-def filter_link_ids():
-    json_request = request.json
-
-    if "keyword" not in json_request.keys():
-        return {'message': 'Invalid parameter passed', 'parameter': 'keyword'}, 400
-
-    keyword = json_request.get('keyword').strip()
-
-    feed_list = []
-
-    if not keyword:
-        return {'message': 'Invalid parameter passed', 'parameter': 'keyword'}, 400
-
-    feeds = Feeds.query.filter(Feeds.reddit_link_id.ilike(f'%{keyword}%')).order_by(Feeds.reddit_created_utc.desc()).all()
-
-    for entry in feeds:
-        feed_list.append(entry.as_dict())
-
-    return {'assets': feed_list}
-
-
-@app.route('/feeds/filter/multi_subreddit', methods=['POST'])
-def filter_multi_subreddits():
-    json_request = request.json
-
-    if "subreddits" not in json_request.keys():
-        return {'message': 'Invalid parameter passed', 'parameter': 'keyword'}, 400
-
-    subreddits = json_request.get('subreddits')
-    print("Subs")
-    print(subreddits)
-
-    feed_list = []
-
-    if not subreddits or len(subreddits) == 0:
-        return {'message': 'Invalid parameter passed', 'parameter': 'keyword'}, 400
-
-    feeds = Feeds.query.filter(Feeds.reddit_subreddit.in_(subreddits)).order_by(Feeds.reddit_created_utc.desc()).all()
-
-    for entry in feeds:
-        feed_list.append(entry.as_dict())
-
-    return {'assets': feed_list}
-
-
 
 @app.route('/feeds/<subreddit>', methods=['PUT'])
 def add_feeds(subreddit):
@@ -145,10 +84,6 @@ def add_feeds(subreddit):
     imgur_iframe = json_request.get('imgur_iframe')
     w2c_link = json_request.get('w2c_link')
     gl_counter = json_request.get('gl_counter')
-
-    #red_light counter
-    rl_counter = json_request.get('rl_counter')
-    
 
     exists = Feeds.query.filter_by(reddit_link_id=reddit_link_id).first()
 
@@ -168,19 +103,12 @@ def add_feeds(subreddit):
 
             if exists.gl_counter != gl_counter:
                 exists.gl_counter != gl_counter
-            
-            # Red_light counter
-            
-            if exists.rl_counter != rl_counter:
-                exists.rl_counter != rl_counter
-
 
             db.session.commit()
             return {'message': 'Feed already exists. Tried to update info.'}, 409
         except Exception as err:
             db.session.rollback()
             return {'message': 'Internal server error upon inserting on errors table', 'error': err}, 500
-        #Remove deleted posts
 
     try:
         feed = Feeds(
@@ -192,10 +120,7 @@ def add_feeds(subreddit):
             imgur_iframe=imgur_iframe,
             thumbnail_link=thumbnail_link,
             w2c_link=w2c_link,
-            gl_counter=gl_counter,
-
-            # Red_light counter
-            rl_counter=rl_counter
+            gl_counter=gl_counter
         )
 
         db.session.add(feed)
@@ -222,8 +147,3 @@ def add_feeds(subreddit):
     except Exception as err:
         db.session.rollback()
         return {'message': 'Internal server error', 'error': err}, 500
-
-# Green light and Red light counter.
-@app.route('/feeds/<subreddit>', methods=['PUT'])
-def func():
-    pass    
